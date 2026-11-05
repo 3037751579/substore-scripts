@@ -82,7 +82,8 @@ config["proxy-groups"] = [
   {
     name: G.crypto,
     type: "select",
-    proxies: ["DIRECT", G.main, ...names]
+    // 默认跟随主代理组；DIRECT 仍可手动选择
+    proxies: [G.main, "DIRECT", ...names]
   },
   {
     name: G.ai,
@@ -251,14 +252,20 @@ config.rules = [
     "bitgetapp.com",
     "bitgetapps.com",
     "krbitget.com",
+    "bitget.cloud",
+    "gurenla.com",
+    "noxiaohao.com",
+    "bgstatic.com",
+    "bgbstatic.com",
     "bybit.com",
     "okx.com",
     "okex.com",
     "coinbase.com",
     "kraken.com"
   ], G.crypto),
-  // 仅匹配已观察到的 Bitget App API，不扩大到整个 abcdstable.com
+  // Bitget App API / 实时数据：只匹配已观察到的主机名
   "DOMAIN,appapi.abcdstable.com," + G.crypto,
+  "DOMAIN,stream.abcdstable.com," + G.crypto,
   `RULE-SET,Crypto,${G.crypto}`,
 
   // F. Apple
