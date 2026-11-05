@@ -248,12 +248,17 @@ config.rules = [
     "binance.com",
     "binance.us",
     "bitget.com",
+    "bitgetapp.com",
+    "bitgetapps.com",
+    "krbitget.com",
     "bybit.com",
     "okx.com",
     "okex.com",
     "coinbase.com",
     "kraken.com"
   ], G.crypto),
+  // 仅匹配已观察到的 Bitget App API，不扩大到整个 abcdstable.com
+  "DOMAIN,appapi.abcdstable.com," + G.crypto,
   `RULE-SET,Crypto,${G.crypto}`,
 
   // F. Apple
