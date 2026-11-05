@@ -1,0 +1,284 @@
+// Sub-Store → Mihomo 高级分流 v2
+// 节点来自 all-vps；适用于 Clash Verge
+
+const config = ProxyUtils.yaml.safeLoad(
+  $content ?? $files[0]
+) || {};
+
+const nodes = Array.isArray(config.proxies)
+  ? config.proxies : [];
+
+if (!nodes.length) {
+  throw new Error("all-vps 没有可用节点");
+}
+
+// ========== 1. 代理组 ==========
+
+const G = {
+  main: "🚀 节点选择",
+  auto: "⚡ 自动选择",
+  crypto: "💱 交易所",
+  ai: "🤖 AI服务",
+  claude: "🟣 Claude AI",
+  telegram: "✈️ Telegram",
+  youtube: "📺 YouTube",
+  apple: "🍎 苹果服务",
+  ads: "🛑 广告拦截",
+  final: "🐟 漏网之鱼"
+};
+
+// 节点名称去重
+const used = new Set([
+  "DIRECT", "REJECT", ...Object.values(G)
+]);
+
+for (const node of nodes) {
+  const original = String(node.name || "未命名节点");
+  let name = original;
+  let n = 2;
+
+  while (used.has(name)) {
+    name = `${original} #${n++}`;
+  }
+
+  node.name = name;
+  used.add(name);
+}
+
+const names = nodes.map(n => n.name);
+
+// AI 分组优先使用的节点
+const AI_NODE = "Host-V-家宽";
+const aiNodes = [
+  ...names.filter(n => n === AI_NODE),
+  G.main,
+  ...names.filter(n => n !== AI_NODE)
+];
+
+config.mode = "rule";
+config["allow-lan"] = false;
+config["log-level"] = "info";
+config["unified-delay"] = true;
+config.profile = {
+  ...(config.profile || {}),
+  "store-selected": true
+};
+
+// 保留客户端现有 DNS、TUN 和监听端口设置
+config["proxy-groups"] = [
+  {
+    name: G.main,
+    type: "select",
+    proxies: [G.auto, ...names, "DIRECT"]
+  },
+  {
+    name: G.auto,
+    type: "url-test",
+    proxies: names,
+    url: "https://www.gstatic.com/generate_204",
+    interval: 300,
+    tolerance: 50
+  },
+  {
+    name: G.crypto,
+    type: "select",
+    proxies: ["DIRECT", G.main, ...names]
+  },
+  {
+    name: G.ai,
+    type: "select",
+    proxies: aiNodes
+  },
+  {
+    name: G.claude,
+    type: "select",
+    proxies: aiNodes
+  },
+  {
+    name: G.telegram,
+    type: "select",
+    proxies: [G.main, ...names]
+  },
+  {
+    name: G.youtube,
+    type: "select",
+    proxies: [G.main, ...names]
+  },
+  {
+    name: G.apple,
+    type: "select",
+    proxies: ["DIRECT", G.main, ...names]
+  },
+  {
+    name: G.ads,
+    type: "select",
+    proxies: ["REJECT", "DIRECT"]
+  },
+  {
+    name: G.final,
+    type: "select",
+    proxies: [G.main, "DIRECT", ...names]
+  }
+];
+
+// ========== 2. 远程规则集 ==========
+
+const meta =
+  "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/";
+
+const bm =
+  "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/";
+
+function mrs(name, category, file, behavior = "domain") {
+  return {
+    type: "http",
+    behavior,
+    format: "mrs",
+    url: meta + category + "/" + file + ".mrs",
+    path: "./ruleset/v2-" + name + ".mrs",
+    interval: 86400,
+    proxy: G.main
+  };
+}
+
+function classical(name, category) {
+  return {
+    type: "http",
+    behavior: "classical",
+    format: "yaml",
+    url: bm + category + "/" + category + ".yaml",
+    path: "./ruleset/v2-" + name + ".yaml",
+    interval: 86400,
+    proxy: G.main
+  };
+}
+
+config["rule-providers"] = {
+  // AI 服务
+  Claude: classical("claude", "Claude"),
+  Anthropic: classical("anthropic", "Anthropic"),
+  OpenAI: classical("openai", "OpenAI"),
+  Gemini: classical("gemini", "Gemini"),
+  Copilot: classical("copilot", "Copilot"),
+
+  // 专项服务
+  Crypto: classical("crypto", "Crypto"),
+  Apple: classical("apple", "Apple"),
+
+  // 通用分流
+  Ads: mrs("ads", "geosite", "category-ads-all"),
+  CN: mrs("cn", "geosite", "cn"),
+  CNIP: mrs("cnip", "geoip", "cn", "ipcidr"),
+  Foreign: mrs("foreign", "geosite", "geolocation-!cn"),
+
+  // 常用国外服务
+  GitHub: mrs("github", "geosite", "github"),
+  YouTube: mrs("youtube", "geosite", "youtube"),
+  Telegram: mrs("telegram", "geosite", "telegram"),
+  TelegramIP: mrs(
+    "telegramip", "geoip", "telegram", "ipcidr"
+  )
+};
+
+// ========== 3. 分流规则 ==========
+
+const suffix = (domains, target) =>
+  domains.map(d => `DOMAIN-SUFFIX,${d},${target}`);
+
+config.rules = [
+  // A. 局域网和本地地址直连
+  "DOMAIN-SUFFIX,localhost,DIRECT",
+  "DOMAIN-SUFFIX,local,DIRECT",
+  "DOMAIN-SUFFIX,lan,DIRECT",
+  "IP-CIDR,127.0.0.0/8,DIRECT,no-resolve",
+  "IP-CIDR,10.0.0.0/8,DIRECT,no-resolve",
+  "IP-CIDR,172.16.0.0/12,DIRECT,no-resolve",
+  "IP-CIDR,192.168.0.0/16,DIRECT,no-resolve",
+  "IP-CIDR,169.254.0.0/16,DIRECT,no-resolve",
+  "IP-CIDR6,fc00::/7,DIRECT,no-resolve",
+  "IP-CIDR6,fe80::/10,DIRECT,no-resolve",
+
+  // B. 汽水音乐优先直连
+  "DOMAIN-SUFFIX,qishui.com,DIRECT",
+  "DOMAIN,qishui.douyin.com,DIRECT",
+
+  // C. Claude：最高优先级的 AI 规则
+  ...suffix([
+    "claude.ai",
+    "claude.com",
+    "anthropic.com",
+    "claudeusercontent.com",
+    "anthropicusercontent.com"
+  ], G.claude),
+  `RULE-SET,Claude,${G.claude}`,
+  `RULE-SET,Anthropic,${G.claude}`,
+
+  // D. OpenAI / Gemini / 其他 AI
+  ...suffix([
+    "openai.com",
+    "chatgpt.com",
+    "oaistatic.com",
+    "oaiusercontent.com",
+    "grok.com",
+    "x.ai",
+    "perplexity.ai",
+    "poe.com",
+    "cursor.com",
+    "cursor.sh",
+    "codeium.com",
+    "windsurf.com",
+    "githubcopilot.com",
+    // Muse / Meta AI
+    "muse.ai",
+    "meta.ai",
+    "metaaivm.com",
+    "meta.com",
+    "facebook.com",
+    "fbcdn.net"
+  ], G.ai),
+  "DOMAIN,gemini.google.com," + G.ai,
+  "DOMAIN,aistudio.google.com," + G.ai,
+  "DOMAIN,generativelanguage.googleapis.com," + G.ai,
+  `RULE-SET,OpenAI,${G.ai},no-resolve`,
+  `RULE-SET,Gemini,${G.ai}`,
+  `RULE-SET,Copilot,${G.ai},no-resolve`,
+
+  // E. 加密货币交易所
+  ...suffix([
+    "binance.com",
+    "binance.us",
+    "bitget.com",
+    "bybit.com",
+    "okx.com",
+    "okex.com",
+    "coinbase.com",
+    "kraken.com"
+  ], G.crypto),
+  `RULE-SET,Crypto,${G.crypto}`,
+
+  // F. Apple
+  `RULE-SET,Apple,${G.apple},no-resolve`,
+  "DOMAIN-SUFFIX,icloud.com," + G.apple,
+  "DOMAIN-SUFFIX,apple.com," + G.apple,
+
+  // G. 广告拦截
+  `RULE-SET,Ads,${G.ads}`,
+
+  // H. 常见国外服务
+  `RULE-SET,GitHub,${G.main}`,
+  `RULE-SET,YouTube,${G.youtube}`,
+  `RULE-SET,Telegram,${G.telegram}`,
+  `RULE-SET,TelegramIP,${G.telegram},no-resolve`,
+
+  // I. 中国大陆直连
+  `RULE-SET,CN,DIRECT`,
+  `RULE-SET,CNIP,DIRECT,no-resolve`,
+
+  // J. 国外域名
+  `RULE-SET,Foreign,${G.main}`,
+
+  // K. 未匹配的流量
+  `MATCH,${G.final}`
+];
+
+$content = ProxyUtils.yaml.dump(config);
