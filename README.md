@@ -31,7 +31,7 @@
 |---|---|---|
 | 🚀 节点选择 | 通用代理流量 | ⚡ 自动选择 |
 | ⚡ 自动选择 | 按延迟自动选节点 | 延迟最低的节点 |
-| 💱 交易所 | 加密货币交易所 | DIRECT |
+| 💱 交易所 | 加密货币交易所（含 Bitget App 补充域名） | 🚀 节点选择 |
 | 🤖 AI服务 | OpenAI、Gemini、Copilot、Muse / Meta AI 等 | `AI_NODE` |
 | 🟣 Claude AI | Claude / Anthropic | `AI_NODE` |
 | ✈️ Telegram | Telegram | 🚀 节点选择 |
@@ -41,6 +41,8 @@
 | 🐟 漏网之鱼 | 未匹配的流量 | 🚀 节点选择 |
 
 默认选项只在没有保存过选择时生效，平时以 Clash Verge 里手动选的节点为准。
+
+**Bitget App 排障：** 若交易所组此前手动选过 `DIRECT`，客户端可能记住了这个选择。更新配置后，进入「💱 交易所」手动改为「🚀 节点选择」（或能正常连通的具体节点），再清理旧连接并重新打开 App。`pushstat.api.engagelab.cc` 是第三方推送服务的共享接口，暂不强制路由到交易所组。
 
 ## 分流顺序
 
