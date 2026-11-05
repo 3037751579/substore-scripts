@@ -16,7 +16,7 @@
 2. 类型选「远程链接」，填入：
 
    ```text
-   https://raw.githubusercontent.com/3037751579/substore-scripts/main/substore.js
+   https://raw.githubusercontent.com/Eggfin/substore-scripts/main/substore.js
    ```
 
 3. 打开「关闭缓存」，然后保存文件。
