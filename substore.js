@@ -19,6 +19,7 @@ const G = {
   auto: "⚡ 自动选择",
   crypto: "💱 交易所",
   ai: "🤖 AI服务",
+  openai: "🟢 OpenAI",
   claude: "🟣 Claude AI",
   telegram: "✈️ Telegram",
   youtube: "📺 YouTube",
@@ -86,6 +87,11 @@ config["proxy-groups"] = [
   },
   {
     name: G.ai,
+    type: "select",
+    proxies: aiNodes
+  },
+  {
+    name: G.openai,
     type: "select",
     proxies: aiNodes
   },
@@ -213,12 +219,17 @@ config.rules = [
   `RULE-SET,Claude,${G.claude}`,
   `RULE-SET,Anthropic,${G.claude}`,
 
-  // D. OpenAI / Gemini / 其他 AI
+  // D. OpenAI：独立分组，优先于通用 AI 和兜底规则
   ...suffix([
     "openai.com",
     "chatgpt.com",
     "oaistatic.com",
-    "oaiusercontent.com",
+    "oaiusercontent.com"
+  ], G.openai),
+  `RULE-SET,OpenAI,${G.openai},no-resolve`,
+
+  // Gemini / 其他 AI
+  ...suffix([
     "grok.com",
     "x.ai",
     "perplexity.ai",
@@ -239,7 +250,6 @@ config.rules = [
   "DOMAIN,gemini.google.com," + G.ai,
   "DOMAIN,aistudio.google.com," + G.ai,
   "DOMAIN,generativelanguage.googleapis.com," + G.ai,
-  `RULE-SET,OpenAI,${G.ai},no-resolve`,
   `RULE-SET,Gemini,${G.ai}`,
   `RULE-SET,Copilot,${G.ai},no-resolve`,
 
