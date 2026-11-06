@@ -258,12 +258,19 @@ config.rules = [
     "binance.com",
     "binance.us",
     "bitget.com",
+    // Bitget 客户端备用域名（连接记录确认）
+    "krbitget.com",
+    "bitgetapps.com",
     "bybit.com",
     "okx.com",
     "okex.com",
     "coinbase.com",
     "kraken.com"
   ], G.crypto),
+  // 仅匹配连接记录中出现的主机，避免扩大到其他业务
+  `DOMAIN,appapi.gdrichem.com,${G.crypto}`,
+  `DOMAIN,appapi.abcdstable.com,${G.crypto}`,
+  `DOMAIN,www.abcdstable.com,${G.crypto}`,
   `RULE-SET,Crypto,${G.crypto}`,
 
   // F. Apple
