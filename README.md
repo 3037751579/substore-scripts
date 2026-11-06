@@ -32,7 +32,8 @@
 | 🚀 节点选择 | 通用代理流量 | ⚡ 自动选择 |
 | ⚡ 自动选择 | 按延迟自动选节点 | 延迟最低的节点 |
 | 💱 交易所 | 加密货币交易所 | DIRECT |
-| 🤖 AI服务 | OpenAI、Gemini、Copilot、Muse / Meta AI 等 | `AI_NODE` |
+| 🤖 AI服务 | Gemini、Copilot、Muse / Meta AI 等 | `AI_NODE` |
+| 🟢 OpenAI | ChatGPT / OpenAI | `AI_NODE` |
 | 🟣 Claude AI | Claude / Anthropic | `AI_NODE` |
 | ✈️ Telegram | Telegram | 🚀 节点选择 |
 | 📺 YouTube | YouTube | 🚀 节点选择 |
@@ -49,14 +50,15 @@
 1. 本地和局域网地址直连
 2. 汽水音乐直连
 3. Claude / Anthropic
-4. 其他 AI 服务，以及 Muse / Meta AI
-5. 加密货币交易所
-6. Apple
-7. 广告拦截
-8. GitHub、YouTube、Telegram
-9. 中国大陆域名和 IP 直连
-10. 其他国外域名走 🚀 节点选择
-11. 其余流量走 🐟 漏网之鱼
+4. OpenAI / ChatGPT（独立走 🟢 OpenAI，包含 OpenAI 远程规则集）
+5. 其他 AI 服务，以及 Muse / Meta AI
+6. 加密货币交易所
+7. Apple
+8. 广告拦截
+9. GitHub、YouTube、Telegram
+10. 中国大陆域名和 IP 直连
+11. 其他国外域名走 🚀 节点选择
+12. 其余流量走 🐟 漏网之鱼
 
 新增规则时，要放在 `RULE-SET,Foreign` 和 `MATCH` 之前，否则不会生效。
 
