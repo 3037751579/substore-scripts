@@ -2,6 +2,14 @@
 
 ## 2026-11-06
 
+### 修复 Bitget 客户端备用域名漏分流
+
+- 根据用户提供的连接截图，确认 `appapi.bitget.com` 命中原有规则，而多个备用主机落到 `MATCH`；此前仅验证主域名及其子域名，未覆盖这些备用域名。
+- 将 `krbitget.com`、`bitgetapps.com` 及其子域名加入「💱 交易所」。
+- 为截图中的 `appapi.gdrichem.com`、`appapi.abcdstable.com`、`www.abcdstable.com` 添加精确域名规则，不扩大到其他子域名。
+- 已通过脚本语法、截图中七个完整可见主机、现有交易所主域名、匹配顺序、域名边界及 OpenAI / Claude 分流回归检查；客户端实际出口需更新配置后重连确认。
+- 使用时重新生成 Sub-Store 文件、更新客户端配置并重启 Bitget；已建立的连接需断开重连。
+
 ### 交易所分流检查
 
 - 核验 `bitget.com`、`www.bitget.com`、`api.bitget.com`、`ws.bitget.com` 及现有 Binance、Bybit、OKX、Coinbase、Kraken 主域名的生成规则，均指向「💱 交易所」，且早于 `Foreign`。
