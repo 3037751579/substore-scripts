@@ -2,6 +2,14 @@
 
 ## 2026-11-06
 
+### 根据实时日志补齐 Bitget 分流
+
+- 新日志发现 `appapi.bitgetapp.com`（与 `bitgetapps.com` 不同）和 `stream.abcdstable.com` 走「🐟 漏网之鱼」。
+- 新增 `bitgetapp.com` 后缀规则及 `stream.abcdstable.com` 精确规则，指向「💱 交易所」。
+- 语法检查、两次截图中的九个 Bitget 主机匹配、规则顺序、域名边界和 AI 分流回归检查通过。
+- 日志中的 `appapi.bitgetapps.com` 在上一版已覆盖；若更新后新建连接仍走兜底，需确认 Sub-Store 重新生成及客户端实际加载的配置。
+- 未将共享推送、统计服务批量归入交易所；日志中的广告拒绝、QUIC 阻断与域名漏匹配分别排查。尚未验证客户端更新后的实际出口。
+
 ### 修复 Bitget 客户端备用域名漏分流
 
 - 根据用户提供的连接截图，确认 `appapi.bitget.com` 命中原有规则，而多个备用主机落到 `MATCH`；此前仅验证主域名及其子域名，未覆盖这些备用域名。
