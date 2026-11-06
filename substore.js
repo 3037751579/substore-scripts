@@ -261,6 +261,7 @@ config.rules = [
     // Bitget 客户端备用域名（连接记录确认）
     "krbitget.com",
     "bitgetapps.com",
+    "bitgetapp.com",
     "bybit.com",
     "okx.com",
     "okex.com",
@@ -271,6 +272,7 @@ config.rules = [
   `DOMAIN,appapi.gdrichem.com,${G.crypto}`,
   `DOMAIN,appapi.abcdstable.com,${G.crypto}`,
   `DOMAIN,www.abcdstable.com,${G.crypto}`,
+  `DOMAIN,stream.abcdstable.com,${G.crypto}`,
   `RULE-SET,Crypto,${G.crypto}`,
 
   // F. Apple
