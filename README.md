@@ -9,6 +9,7 @@
 | 文件 | 说明 |
 |---|---|
 | `substore.js` | Sub-Store 脚本：生成代理组、规则集和分流规则 |
+| [CHANGELOG.md](CHANGELOG.md) | 更新记录 |
 
 ## 在 Sub-Store 中使用
 
@@ -70,7 +71,7 @@
 
 ## 更新流程
 
-1. 修改 `substore.js` 并推送到 `main`。
+1. 修改 `substore.js`，同步补充 [更新记录](CHANGELOG.md)，再推送到 `main`。
 2. 等几分钟，让 GitHub Raw 链接更新。
 3. 在 Clash Verge 中更新订阅。
 4. 新增分组后，在「代理」页为它选择节点。
