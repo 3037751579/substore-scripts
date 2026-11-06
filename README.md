@@ -78,7 +78,7 @@
 
 ## 交易所分流排查
 
-`bitget.com` 及其子域名（如 `api.bitget.com`、`ws.bitget.com`）由显式规则指向「💱 交易所」，优先于 `Foreign` 和 `MATCH`。另外，`krbitget.com`、`bitgetapps.com` 及其子域名也走「💱 交易所」。根据客户端连接记录，还为 `appapi.gdrichem.com`、`appapi.abcdstable.com`、`www.abcdstable.com` 添加了精确域名规则，避免扩大到同域名下的其他业务。当前远程 Crypto 规则集未包含 Bitget，其他服务域名需根据实际连接记录核对。
+`bitget.com` 及其子域名（如 `api.bitget.com`、`ws.bitget.com`）由显式规则指向「💱 交易所」，优先于 `Foreign` 和 `MATCH`。另外，`krbitget.com`、`bitgetapps.com`、`bitgetapp.com` 及其子域名也走「💱 交易所」。根据客户端连接记录，还为 `appapi.gdrichem.com`、`appapi.abcdstable.com`、`www.abcdstable.com`、`stream.abcdstable.com` 添加了精确域名规则，避免扩大到同域名下的其他业务。当前远程 Crypto 规则集未包含 Bitget，其他服务域名需根据实际连接记录核对。
 
 遇到交易所请求显示「🚀 节点选择」时：
 
